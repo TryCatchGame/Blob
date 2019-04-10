@@ -2,12 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathCapsule : MonoBehaviour {
+using MyBox;
+
+public class ButtonCapsule : MonoBehaviour {
+
+    public delegate void CapsuleCollisionWithPlayer(CapsulePos capsulePos);
+
+    public CapsuleCollisionWithPlayer OnCapsuleCollisionWithPlayer;
+
+    [SerializeField, Tooltip("Modifier value of how fast this button will appear/hide."), Range(1f, 10f)]
+    private float lerpModifier;
 
     [SerializeField, Tooltip("Where this capsule will appear from the center cube")]
     private CapsulePos capsulePos;
 
-    public void Pop() {
+    public CapsulePos Position {
+        get {
+            return capsulePos;
+        }
+    }
+
+    private void Awake() {
+        OnCapsuleCollisionWithPlayer = delegate { };
+    }
+
+    public void Pop(System.Action callback = null) {
+        transform.position = Vector3.zero;
         GameObject centerCube = CenterCube.Instance.gameObject;
 
         Vector3 centerCubeSize = centerCube.GetComponent<BoxCollider>().size;
@@ -25,25 +45,35 @@ public class DeathCapsule : MonoBehaviour {
             newCapsulePos.x = centerCube.transform.position.x - (centerCubeSize.x / 2f);
         }
 
-        StartCoroutine(LerpToNewPosition(newCapsulePos));
+        StartCoroutine(LerpToNewPosition(newCapsulePos, callback));
     }
 
-    public void Hide() {
-        StartCoroutine(LerpToNewPosition(Vector3.zero));
+    public void Hide(System.Action callback = null) {
+        StartCoroutine(LerpToNewPosition(Vector3.zero, callback));
     }
 
-    private IEnumerator LerpToNewPosition(Vector3 newPos) {
+    private IEnumerator LerpToNewPosition(Vector3 newPos, System.Action callback = null) {
         Vector3 oldPos = transform.position;
 
         float progress = 0f;
 
         while (progress < 1f) {
             transform.position = Vector3.Lerp(oldPos, newPos, progress);
-            progress += Time.deltaTime;
+            progress += Time.deltaTime * lerpModifier;
 
             yield return new WaitForEndOfFrame();
         }
 
+        transform.position = newPos;
+
+        callback?.Invoke();
+
         yield return null;
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("PlayerCube")) {
+            OnCapsuleCollisionWithPlayer(Position);
+        }
     }
 }
