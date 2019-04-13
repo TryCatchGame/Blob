@@ -23,12 +23,29 @@ public class CenterCube : Singleton<CenterCube> {
         waitingForPlayer = false;
         canRotate = false;
 
-        foreach (var capsule in buttonCapsules) {
-            capsule.OnCapsuleCollisionWithPlayer += HandleCapsuleCollisionWithPlayer;
-        }
+
+        SetEventHandlerOnButtons();
 
         PopCapsuleAtPosition(CapsulePos.Top, delegate { player.CanJump = true; });
         lastPoppedCapsulePosition = CapsulePos.Top;
+    }
+
+    private void SetEventHandlerOnButtons() {
+        foreach (var capsule in buttonCapsules) {
+            capsule.OnCapsuleCollisionWithPlayer += HandleCapsuleCollisionWithPlayer;
+        }
+    }
+
+    private void HandleCapsuleCollisionWithPlayer(CapsulePos pos) {
+        if (!waitingForPlayer) {
+            waitingForPlayer = true;
+            lastPoppedCapsulePosition = pos;
+            HideCapsuleAtPosition(pos);
+
+            SetNewCapsulePosition();
+
+            GameManager.Instance.AddScore();
+        }
     }
 
     public void RotateCube(bool left) {
@@ -63,16 +80,6 @@ public class CenterCube : Singleton<CenterCube> {
         transform.eulerAngles = temp;
 
         yield return null;
-    }
-
-    private void HandleCapsuleCollisionWithPlayer(CapsulePos pos) {
-        if (!waitingForPlayer) {
-            waitingForPlayer = true;
-            lastPoppedCapsulePosition = pos;
-            HideCapsuleAtPosition(pos);
-
-            SetNewCapsulePosition();
-        }
     }
 
     private void SetNewCapsulePosition() {

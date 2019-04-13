@@ -11,14 +11,22 @@ public class GameManager : Singleton<GameManager> {
     [SerializeField]
     private GameObject gameOverCanvas;
 
+    [SerializeField]
+    private Text[] pointTexts;
+
     private float timer;
 
     public bool GameOver { get; private set; }
+
+    public int Point { get; private set; }
 
     // Start is called before the first frame update
     void Start() {
         timer = 60f;
         GameOver = false;
+        Point = 0;
+
+        UpdatePointTexts();
     }
 
     // Update is called once per frame
@@ -39,8 +47,19 @@ public class GameManager : Singleton<GameManager> {
         }
     }
 
+    public void AddScore() {
+        ++Point;
+        UpdatePointTexts();
+    }
+
     public void MakeGameOver() {
         GameOver = true;
         gameOverCanvas.SetActive(true);
+    }
+
+    private void UpdatePointTexts() {
+        foreach (var pointText in pointTexts) {
+            pointText.text = Point.ToString();
+        }
     }
 }
