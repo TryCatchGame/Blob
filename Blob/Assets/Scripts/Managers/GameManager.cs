@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager> {
     // Start is called before the first frame update
     void Start() {
         timer = 60f;
-        GameOver = false;
+        GameOver = true;
         Point = 0;
 
         UpdatePointTexts();
@@ -46,6 +46,11 @@ public class GameManager : Singleton<GameManager> {
             MakeGameOver();
         }
     }
+
+    public void StartGame() {
+        GameOver = false;
+    }
+
 
     public void AddScore() {
         ++Point;

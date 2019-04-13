@@ -7,10 +7,10 @@ using UnityEngine.SceneManagement;
 public class SceneHandler : Singleton<SceneHandler> {
 
     [SerializeField]
-    private int playingFieldBuildIndex;
+    private int mainMenuBuildIndex;
 
     [SerializeField]
-    private int mainMenuBuildIndex;
+    private int playingFieldBuildIndex;
 
     public void RestartScene() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
