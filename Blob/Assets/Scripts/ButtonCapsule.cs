@@ -27,15 +27,16 @@ public class ButtonCapsule : MonoBehaviour {
 	}
 
 	public void Pop(System.Action callback = null) {
-		transform.position = Vector3.zero;
+
+		transform.position = new Vector3(0f, 0f, 0.4f);
 		GameObject centerCube = CenterCube.Instance.gameObject;
 
 		Vector3 centerCubeSize = centerCube.GetComponent<BoxCollider>().size;
 
-		Vector3 newCapsulePos = Vector3.zero;
+		Vector3 newCapsulePos = new Vector3(0f, 0f, 0.4f);
 
-		// Determine where to move the capsule to in order to pop it up.
-		if(capsulePos == CapsulePos.Top) {
+        // Determine where to move the capsule to in order to pop it up.
+        if (capsulePos == CapsulePos.Top) {
 			newCapsulePos.y = centerCube.transform.position.y + (centerCubeSize.y / 2f);
 		} else if(capsulePos == CapsulePos.Bottom) {
 			newCapsulePos.y = centerCube.transform.position.y - (centerCubeSize.y / 2f);
@@ -49,7 +50,7 @@ public class ButtonCapsule : MonoBehaviour {
 	}
 
 	public void Hide(System.Action callback = null) {
-		StartCoroutine(LerpToNewPosition(Vector3.zero, callback));
+		StartCoroutine(LerpToNewPosition(new Vector3(0f, 0f, 0.4f), callback));
 	}
 
 	private IEnumerator LerpToNewPosition(Vector3 newPos, System.Action callback = null) {
